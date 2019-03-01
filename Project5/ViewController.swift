@@ -39,7 +39,7 @@ class ViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return usedWords.count
     }
 
@@ -53,8 +53,8 @@ class ViewController: UITableViewController {
         let ac = UIAlertController(title: "Enter Answer", message: nil, preferredStyle: .alert)
         ac.addTextField()
         let submitAction = UIAlertAction(title: "Submit", style: .default) {
-            [weak self, weak ac] _ in 
-            guard let answer = ac?.textFields?[0].text else { return }
+            [weak self, weak ac] _ in
+            guard let answer = ac?.textFields?[0].text! else { return }
             self?.submit(answer)
         }
         ac.addAction(submitAction)
@@ -112,7 +112,11 @@ class ViewController: UITableViewController {
     
     func isReal(word: String) -> Bool {
         if word.count < 3 { return false }
-        if word == title! { return false }
+        if let title = title {
+            if word == title {
+                return false
+            }
+        }
         let checker = UITextChecker()
         let range = NSMakeRange(0, word.utf16.count)
         let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
